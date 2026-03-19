@@ -20,7 +20,7 @@
 		</div>
 
 		<form class="login-box"
-			action="${pageContext.request.contextPath}/admin/loginOk.ad"
+			action="${pageContext.request.contextPath}/admin/loginOk.adfc"
 			method="post">
 
 			<div class="form-group">

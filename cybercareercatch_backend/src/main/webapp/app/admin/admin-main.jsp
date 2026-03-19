@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+	<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="ko">
 
@@ -7,8 +8,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>관리자 메인 페이지</title>
-	<link rel="stylesheet"
-		href="${pageContext.request.contextPath}/assets/css/admin/admin-main.css">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/admin/admin-main.css">
 </head>
 
 <body>
@@ -26,7 +26,7 @@
 				<a href="${pageContext.request.contextPath}/app/admin/community-management/expo-schedule.jsp">커뮤니티 관리</a>
 			</nav>
 
-			<button class="logout-btn" type="button">로그아웃</button>
+			<a href="${pageContext.request.contextPath}/admin/logout.ad" class="logout-btn">로그아웃</a>
 		</header>
 
 		<main class="main-content">

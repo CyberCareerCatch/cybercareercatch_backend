@@ -7,8 +7,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.ccc.admin.controller.AdminLoginController;
-import com.ccc.admin.controller.AdminLoginOkController;
 import com.ccc.common.Result;
 
 public class AdminFrontController extends HttpServlet {
@@ -18,27 +16,18 @@ public class AdminFrontController extends HttpServlet {
 		super();
 	}
 
-	/**
-	 * GET 요청도 doProcess로 보낸다.
-	 */
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doProcess(request, response);
 	}
 
-	/**
-	 * POST 요청도 doProcess로 보낸다.
-	 */
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		doProcess(request, response);
 	}
 
-	/**
-	 * 실제 요청을 처리하는 메소드이다.
-	 */
 	protected void doProcess(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -65,6 +54,48 @@ public class AdminFrontController extends HttpServlet {
 			System.out.println("관리자 로그인 처리 요청");
 			result = new AdminLoginOkController().execute(request, response);
 			System.out.println("관리자 로그인 처리 완료");
+			break;
+
+		// 관리자 로그아웃 처리 요청
+		case "/admin/logout.adfc":
+			System.out.println("관리자 로그아웃 처리 요청");
+			result = new AdminLogoutController().execute(request, response);
+			System.out.println("관리자 로그아웃 처리 완료");
+			break;
+
+		// 질의문 관리 페이지 요청
+		case "/admin/insertQuestion.adfc":
+			System.out.println("질의문 관리 페이지 요청");
+			result = new AdminInsertQuestionController().execute(request, response);
+			System.out.println("질의문 관리 페이지 이동 완료");
+			break;
+
+		// 질의문 저장 처리 요청
+		case "/admin/insertQuestionOk.adfc":
+			System.out.println("질의문 질문 저장 처리 요청");
+			result = new AdminInsertQuestionControllerOk().execute(request, response);
+			System.out.println("질의문 질문 저장 처리 완료");
+			break;
+
+		// 질의문 답변 목록 페이지 요청
+		case "/admin/jobCheck.adfc":
+			System.out.println("질의문 답변 목록 페이지 요청");
+			result = new AdminJobCheckController().execute(request, response);
+			System.out.println("질의문 답변 목록 페이지 이동 완료");
+			break;
+
+		// 질의문 답변 상세 페이지 요청
+		case "/admin/jobCheckDetail.adfc":
+			System.out.println("질의문 답변 상세 페이지 요청");
+			result = new AdminJobCheckDetailController().execute(request, response);
+			System.out.println("질의문 답변 상세 페이지 이동 완료");
+			break;
+
+		// 질의문 직군 판정 저장 요청
+		case "/admin/judgeJobResult.adfc":
+			System.out.println("질의문 직군 판정 저장 요청");
+			result = new AdminJudgeJobResultController().execute(request, response);
+			System.out.println("질의문 직군 판정 저장 완료");
 			break;
 		}
 

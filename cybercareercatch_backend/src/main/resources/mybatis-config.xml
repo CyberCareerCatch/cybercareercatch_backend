@@ -19,6 +19,8 @@
 	<typeAliases>
 		<typeAlias type="com.ccc.member.dto.UserDTO" alias="UserDTO"></typeAlias>
 		<typeAlias type="com.ccc.member.dto.MemberJoinDTO" alias="MemberJoinDTO"></typeAlias>
+		<typeAlias type="com.ccc.admin.dto.AdminDTO" alias="AdminDTO"></typeAlias>
+		<typeAlias type="com.ccc.admin.dto.AdminMemberListDTO" alias="AdminMemberListDTO'"></typeAlias>
 	</typeAliases>
 
 	<environments default="oracle">
@@ -36,6 +38,7 @@
 	<!-- Mapper.xml 등록 추후 필요 -->
 	<mappers>
 		<mapper resource="mapper/member/MemberMapper.xml" />
+		<mapper resource="mapper/admin/AdminMapper.xml" />
 	</mappers>
 </configuration>
 

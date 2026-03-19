@@ -21,7 +21,7 @@ public class AdminDAO {
 	}
 
 	// 관리자 로그인
-	public AdminDTO login(AdminDTO adminDTO) {
+	public int login(AdminDTO adminDTO) {
 		return sqlSession.selectOne("admin.login", adminDTO);
 	}
 

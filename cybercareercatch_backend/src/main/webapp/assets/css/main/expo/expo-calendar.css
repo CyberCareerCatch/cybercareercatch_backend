@@ -150,6 +150,55 @@ header {
     vertical-align: middle;
 }
 
+
+
+
+
+
+/* expo-cal-event-dot : 박람회 이벤트 표시 기간!!!!!!!!!!!!!!! */
+.expo-cal-event-bar {
+    display: block;
+    height: 6px;
+    background: #6c7fe8;
+    border-radius: 3px;
+    margin-top: 4px;
+}
+/* 시작 */
+.start-bar {
+    border-radius: 6px 0 0 6px;
+}
+
+/* 중간 */
+.middle-bar {
+    border-radius: 0;
+}
+
+/* 끝 */
+.end-bar {
+    border-radius: 0 6px 6px 0;
+}
+/* FullCalendar 이벤트 바 스타일 */
+.fc-event {
+    background-color: #6c7fe8 !important;
+    border: none !important;
+    border-radius: 4px !important;
+    height: 6px;
+}
+
+/* 이벤트 텍스트 숨기고 바만 보이게 */
+.fc-event-title {
+    display: none;
+}
+
+/* 날짜 칸 높이 조절 */
+.fc-daygrid-day-frame {
+    min-height: 80px;
+}
+
+
+
+
+
 /* expo-list : 박람회 리스트 섹션 */
 .expo-list-title {
     font-size: 26px;

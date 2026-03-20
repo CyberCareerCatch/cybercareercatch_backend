@@ -19,9 +19,11 @@
 
 			<!-- 관리자 메인 대시보드로 이동 -->
 			<div class="qnaMgmt-title">
-				<a class="qnaMgmt-answerBtn"
-					href="${pageContext.request.contextPath}/admin/jobCheck.adfc">질의문
-					답변 목록</a>
+				<div class="qnaMgmt-title">
+					<a
+						href="${pageContext.request.contextPath}/app/admin/admin-main.jsp">관리자
+						페이지</a>
+				</div>
 			</div>
 
 			<!-- 상단 메뉴 -->
@@ -31,7 +33,7 @@
 					관리</a> <a
 					href="${pageContext.request.contextPath}/admin/insertQuestion.adfc">메인
 					관리</a> <a
-					href="${pageContext.request.contextPath}/app/admin/community-management/expo-schedule.jsp">커뮤니티
+					href="${pageContext.request.contextPath}/admin/insertQuestion.adfc">질의문
 					관리</a>
 			</nav>
 
@@ -48,7 +50,7 @@
 
 				<div class="qna-left-item qna-active">
 					<a
-						href="${pageContext.request.contextPath}/app/admin/main-management/qna-management.jsp">질의문
+						href="${pageContext.request.contextPath}/admin/insertQuestion.adfc">질의문
 						관리</a>
 				</div>
 

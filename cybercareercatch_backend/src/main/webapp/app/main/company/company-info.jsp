@@ -12,227 +12,301 @@
 </head>
 
 <body>
-    <header></header>
+  <header></header>
 
-    <c:set var="logoSrc" value="" />
-    <c:if test="${not empty companyDetail.filePath}">
-        <c:choose>
-            <c:when test="${fn:startsWith(companyDetail.filePath, 'http://') or fn:startsWith(companyDetail.filePath, 'https://')}">
-                <c:set var="logoSrc" value="${companyDetail.filePath}" />
+  <c:set var="qnaTargetUrl" value="${pageContext.request.contextPath}/member/login.mefc" />
+  <c:set var="qnaLoginRequired" value="true" />
+
+  <c:if test="${not empty sessionScope.memberNumber}">
+      <c:set var="userNumber" value="${sessionScope.memberNumber}" scope="session" />
+      <c:set var="qnaTargetUrl" value="${pageContext.request.contextPath}/app/main/qna/qna-list.jsp" />
+      <c:set var="qnaLoginRequired" value="false" />
+  </c:if>
+
+  <c:set var="logoSrc" value="" />
+  <c:if test="${not empty companyDetail.filePath}">
+      <c:choose>
+          <c:when test="${fn:startsWith(companyDetail.filePath, 'http://') or fn:startsWith(companyDetail.filePath, 'https://')}">
+              <c:set var="logoSrc" value="${companyDetail.filePath}" />
+          </c:when>
+          <c:when test="${fn:startsWith(companyDetail.filePath, '/')}">
+              <c:set var="logoSrc" value="${pageContext.request.contextPath}${companyDetail.filePath}" />
+          </c:when>
+          <c:otherwise>
+              <c:set var="logoSrc" value="${pageContext.request.contextPath}/${companyDetail.filePath}" />
+          </c:otherwise>
+      </c:choose>
+  </c:if>
+
+  <div class="cmp-wrap">
+    <!-- cmp-hdr : 기업 헤더 카드 -->
+    <section class="cmp-hdr">
+      <div class="cmp-hdr-inner">
+        <div class="cmp-hdr-meta">
+          <!-- cmp-hdr-meta-title : 브랜드+회사명 행 -->
+          <div class="cmp-hdr-meta-title">
+            <span class="cmp-hdr-meta-brand">CyberCareerCatch</span>
+            <span class="cmp-hdr-meta-name">
+              <c:choose>
+                <c:when test="${not empty companyDetail.companyName}">
+                  <c:out value="${companyDetail.companyName}" />
+                </c:when>
+                <c:otherwise>기업명 미등록</c:otherwise>
+              </c:choose>
+            </span>
+          </div>
+
+          <table class="cmp-hdr-meta-tbl">
+            <tr>
+              <td class="cmp-hdr-meta-lbl">대표자명</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.compCeoName}">
+                    <c:out value="${companyDetail.compCeoName}" />
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+
+              <td class="cmp-hdr-meta-lbl">설립년도</td>
+              <td>
+                <c:choose>
+                  <c:when test="${companyDetail.compFndYear gt 0}">
+                    ${companyDetail.compFndYear}
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="cmp-hdr-meta-lbl">사원 수</td>
+              <td>
+                <c:choose>
+                  <c:when test="${companyDetail.compEmplCnt gt 0}">
+                    ${companyDetail.compEmplCnt}명
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+
+              <td class="cmp-hdr-meta-lbl">매출액</td>
+              <td>
+                <c:choose>
+                  <c:when test="${companyDetail.compRev gt 0}">
+                    ${companyDetail.compRev}
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+          </table>
+
+          <hr class="cmp-hdr-divider"/>
+
+          <table class="cmp-hdr-meta-tbl">
+            <tr>
+              <td class="cmp-hdr-meta-lbl">사업자번호</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.companyBrn}">
+                    <c:out value="${companyDetail.companyBrn}" />
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="cmp-hdr-meta-lbl">기업형태</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.compType}">
+                    <c:out value="${companyDetail.compType}" />
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="cmp-hdr-meta-lbl">대표 기술</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.compTech}">
+                    <span style="white-space: pre-line;"><c:out value="${companyDetail.compTech}" /></span>
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="cmp-hdr-meta-lbl">주요사업</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.compMainBiz}">
+                    <span style="white-space: pre-line;"><c:out value="${companyDetail.compMainBiz}" /></span>
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+
+            <tr>
+              <td class="cmp-hdr-meta-lbl">회사위치</td>
+              <td>
+                <c:choose>
+                  <c:when test="${not empty companyDetail.companyAddress}">
+                    <span style="white-space: pre-line;"><c:out value="${companyDetail.companyAddress}" /></span>
+                  </c:when>
+                  <c:otherwise>-</c:otherwise>
+                </c:choose>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="cmp-hdr-logo">
+          <div class="cmp-hdr-logo-img"
+               <c:if test="${not empty logoSrc}">
+                 style="background-image: url('${logoSrc}'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+               </c:if>>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 기업 정보 -->
+    <section class="cmp-sec" id="sec-info">
+      <h2 class="cmp-sec-title">기업 정보</h2>
+      <div class="cmp-sec-body">
+        <p class="cmp-sec-sub">
+          <c:choose>
+            <c:when test="${not empty companyDetail.compSummary}">
+              <c:out value="${companyDetail.compSummary}" />
             </c:when>
-            <c:when test="${fn:startsWith(companyDetail.filePath, '/')}">
-                <c:set var="logoSrc" value="${pageContext.request.contextPath}${companyDetail.filePath}" />
+            <c:otherwise>기업 한줄 소개가 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </p>
+
+        <p style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.compInfo}">
+              <c:out value="${companyDetail.compInfo}" />
+            </c:when>
+            <c:otherwise>기업 상세 소개가 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </p>
+
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.compSummary}">
+              <p><strong><c:out value="${companyDetail.compSummary}" /></strong></p>
             </c:when>
             <c:otherwise>
-                <c:set var="logoSrc" value="${pageContext.request.contextPath}/${companyDetail.filePath}" />
+              <p><strong>기업 한줄 소개가 아직 등록되지 않았습니다.</strong></p>
             </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 서비스 확장 및 운영 이력 -->
+    <section class="cmp-sec" id="sec-history">
+      <h2 class="cmp-sec-title">서비스 확장 및 운영 이력</h2>
+      <div class="cmp-sec-body">
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.compSvcHist}">
+              <c:out value="${companyDetail.compSvcHist}" />
+            </c:when>
+            <c:otherwise>서비스 확장 및 운영 이력이 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 인재상 -->
+    <section class="cmp-sec" id="sec-talent">
+      <h2 class="cmp-sec-title">인재상</h2>
+      <div class="cmp-sec-body">
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.jobPostProfile}">
+              <c:out value="${companyDetail.jobPostProfile}" />
+            </c:when>
+            <c:otherwise>인재상이 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 채용 부분 -->
+    <section class="cmp-sec" id="sec-recruit">
+      <h2 class="cmp-sec-title">채용 부분</h2>
+      <div class="cmp-sec-body">
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.jobPostContent}">
+              <c:out value="${companyDetail.jobPostContent}" />
+            </c:when>
+            <c:otherwise>채용 내용이 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 채용 절차 -->
+    <section class="cmp-sec" id="sec-process">
+      <h2 class="cmp-sec-title">채용 절차</h2>
+      <div class="cmp-sec-body">
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.jobPostProcess}">
+              <c:out value="${companyDetail.jobPostProcess}" />
+            </c:when>
+            <c:otherwise>채용 절차가 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 지원 방법 -->
+    <section class="cmp-sec" id="sec-apply">
+      <h2 class="cmp-sec-title">지원 방법</h2>
+      <div class="cmp-sec-body">
+        <div class="cmp-sec-hlgt" style="white-space: pre-line;">
+          <c:choose>
+            <c:when test="${not empty companyDetail.jobPostMethod}">
+              <c:out value="${companyDetail.jobPostMethod}" />
+            </c:when>
+            <c:otherwise>지원 방법이 아직 등록되지 않았습니다.</c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </section>
+
+    <!-- 기업 QnA -->
+    <section class="cmp-sec cmp-qna" id="sec-qna">
+      <div class="cmp-qna-box"
+           data-url="${qnaTargetUrl}"
+           data-login-required="${qnaLoginRequired}">
+        <p class="cmp-qna-title">기업 QnA 게시판</p>
+
+        <c:choose>
+          <c:when test="${not empty sessionScope.memberNumber}">
+            <p class="cmp-qna-sub">기업 담당자와 대화해보세요!</p>
+          </c:when>
+          <c:otherwise>
+            <p class="cmp-qna-sub">로그인 후 이용할 수 있습니다.</p>
+          </c:otherwise>
         </c:choose>
-    </c:if>
+      </div>
+    </section>
 
-    <main class="cmp-page">
-        <section class="cmp-hdr">
-            <div class="cmp-hdr-inner">
-                <div class="cmp-hdr-main">
-                    <div class="cmp-hdr-title-row">
-                        <span class="cmp-hdr-brand">CyberCareerCatch</span>
-                        <h1 class="cmp-hdr-name">
-                            <c:out value="${companyDetail.companyName}" default="기업명 미등록" />
-                        </h1>
-                    </div>
+  </div>
 
-                    <div class="cmp-chip-list">
-                        <c:if test="${companyDetail.cat1IsHiring eq 1}">
-                            <span class="cmp-chip">보안컨설팅</span>
-                        </c:if>
-                        <c:if test="${companyDetail.cat2IsHiring eq 1}">
-                            <span class="cmp-chip">시스템/네트워크/엔지니어</span>
-                        </c:if>
-                        <c:if test="${companyDetail.cat3IsHiring eq 1}">
-                            <span class="cmp-chip">보안관제</span>
-                        </c:if>
-                        <c:if test="${companyDetail.cat4IsHiring eq 1}">
-                            <span class="cmp-chip">침해사고/포렌식</span>
-                        </c:if>
-
-                        <c:if test="${companyDetail.cat1IsHiring ne 1 and companyDetail.cat2IsHiring ne 1 and companyDetail.cat3IsHiring ne 1 and companyDetail.cat4IsHiring ne 1}">
-                            <span class="cmp-chip cmp-chip--muted">채용 직군 미등록</span>
-                        </c:if>
-                    </div>
-
-                    <div class="cmp-summary-box">
-                        ${empty companyDetail.compSummary ? '기업 한줄 소개가 아직 등록되지 않았습니다.' : companyDetail.compSummary}
-                    </div>
-
-                    <div class="cmp-info-grid">
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">대표자명</span>
-                            <span class="cmp-info-value"><c:out value="${companyDetail.compCeoName}" default="-" /></span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">설립년도</span>
-                            <span class="cmp-info-value">
-                                <c:choose>
-                                    <c:when test="${companyDetail.compFndYear gt 0}">
-                                        ${companyDetail.compFndYear}
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">사원 수</span>
-                            <span class="cmp-info-value">
-                                <c:choose>
-                                    <c:when test="${companyDetail.compEmplCnt gt 0}">
-                                        ${companyDetail.compEmplCnt}명
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">매출액</span>
-                            <span class="cmp-info-value">
-                                <c:choose>
-                                    <c:when test="${companyDetail.compRev gt 0}">
-                                        ${companyDetail.compRev}
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">자본금</span>
-                            <span class="cmp-info-value">
-                                <c:choose>
-                                    <c:when test="${companyDetail.compCap gt 0}">
-                                        ${companyDetail.compCap}
-                                    </c:when>
-                                    <c:otherwise>-</c:otherwise>
-                                </c:choose>
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">기업형태</span>
-                            <span class="cmp-info-value"><c:out value="${companyDetail.compType}" default="-" /></span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">대표 기술</span>
-                            <span class="cmp-info-value cmp-info-value--multiline">
-                                <c:out value="${companyDetail.compTech}" default="-" />
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">주요사업</span>
-                            <span class="cmp-info-value cmp-info-value--multiline">
-                                <c:out value="${companyDetail.compMainBiz}" default="-" />
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">회사 위치</span>
-                            <span class="cmp-info-value cmp-info-value--multiline">
-                                <c:out value="${companyDetail.companyAddress}" default="-" />
-                            </span>
-                        </div>
-
-                        <div class="cmp-info-item">
-                            <span class="cmp-info-label">사업자번호</span>
-                            <span class="cmp-info-value"><c:out value="${companyDetail.companyBrn}" default="-" /></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="cmp-hdr-logo">
-                    <c:choose>
-                        <c:when test="${not empty logoSrc}">
-                            <img class="cmp-hdr-logo-img"
-                                 src="${logoSrc}"
-                                 alt="<c:out value='${companyDetail.companyName}' default='기업' /> 로고"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="cmp-hdr-logo-fallback" style="display:none;">로고 이미지</div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="cmp-hdr-logo-fallback">로고 이미지</div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">기업 정보</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--strong">
-                    ${empty companyDetail.compSummary ? '기업 한줄 소개가 아직 등록되지 않았습니다.' : companyDetail.compSummary}
-                </div>
-
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.compInfo ? '기업 상세 소개가 아직 등록되지 않았습니다.' : companyDetail.compInfo}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">서비스 확장 및 운영 이력</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.compSvcHist ? '서비스 확장 및 운영 이력이 아직 등록되지 않았습니다.' : companyDetail.compSvcHist}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">인재상</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.jobPostProfile ? '인재상이 아직 등록되지 않았습니다.' : companyDetail.jobPostProfile}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">채용 부분</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.jobPostContent ? '채용 내용이 아직 등록되지 않았습니다.' : companyDetail.jobPostContent}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">채용 절차</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.jobPostProcess ? '채용 절차가 아직 등록되지 않았습니다.' : companyDetail.jobPostProcess}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec">
-            <h2 class="cmp-sec-title">지원 방법</h2>
-            <div class="cmp-sec-body">
-                <div class="cmp-text-block cmp-text-block--multiline">
-                    ${empty companyDetail.jobPostMethod ? '지원 방법이 아직 등록되지 않았습니다.' : companyDetail.jobPostMethod}
-                </div>
-            </div>
-        </section>
-
-        <section class="cmp-sec cmp-qna">
-            <div class="cmp-qna-box" data-url="${pageContext.request.contextPath}/app/main/qna/qna-list.jsp">
-                <p class="cmp-qna-title">기업 QnA 게시판</p>
-                <p class="cmp-qna-sub">기업 담당자와 대화해보세요!</p>
-            </div>
-        </section>
-    </main>
-
-    <script src="${pageContext.request.contextPath}/assets/js/main/company/company-info.js"></script>
+  <script src="${pageContext.request.contextPath}/assets/js/main/company/company-info.js"></script>
 </body>
 </html>

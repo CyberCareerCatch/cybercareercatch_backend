@@ -6,8 +6,10 @@
     <select id="companyadcount" parameterType="com.ccc.company.dto.CompanyCardDTO" resultType="int">
         SELECT COUNT(DISTINCT C.COMPANY_NUMBER)
         FROM TBL_COMPANY C
-        JOIN TBL_COMP_INFO CI ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
-        LEFT JOIN TBL_JOB_POST JP ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
+        JOIN TBL_COMP_INFO CI
+          ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
+        LEFT JOIN TBL_JOB_POST JP
+          ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
         WHERE C.COMPANY_STATE = '승인'
         <if test="jobNumber != null">
             <choose>
@@ -20,28 +22,52 @@
     </select>
 
     <select id="companyadlist" parameterType="com.ccc.company.dto.CompanyCardDTO" resultType="com.ccc.company.dto.CompanyCardDTO">
-        SELECT companyNumber, companyName, companyAddress, filePath, compType, compSummary, compPageDate, cat1IsHiring, cat2IsHiring, cat3IsHiring, cat4IsHiring
+        SELECT
+            companyNumber,
+            companyName,
+            companyAddress,
+            filePath,
+            compType,
+            compSummary,
+            compPageDate,
+            cat1IsHiring,
+            cat2IsHiring,
+            cat3IsHiring,
+            cat4IsHiring
         FROM (
-            SELECT ROW_NUMBER() OVER (
-                <choose>
-                    <when test="sortType == 'name'">ORDER BY C.COMPANY_NAME ASC, C.COMPANY_NUMBER DESC</when>
-                    <otherwise>ORDER BY CI.COMP_PAGE_DATE DESC, C.COMPANY_NUMBER DESC</otherwise>
-                </choose>
-            ) AS rowNum,
-            C.COMPANY_NUMBER AS companyNumber,
-            C.COMPANY_NAME AS companyName,
-            C.COMPANY_ADDRESS AS companyAddress,
-            CI.COMP_IMAGE_PATH AS filePath,
-            CI.COMP_TYPE AS compType,
-            CI.COMP_SUMMARY AS compSummary,
-            TO_CHAR(CI.COMP_PAGE_DATE, 'YYYY-MM-DD') AS compPageDate,
-            NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
-            NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
-            NVL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
-            NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
+            SELECT
+                ROW_NUMBER() OVER (
+                    <choose>
+                        <when test="sortType == 'name'">ORDER BY C.COMPANY_NAME ASC, C.COMPANY_NUMBER DESC</when>
+                        <otherwise>ORDER BY CI.COMP_PAGE_DATE DESC, C.COMPANY_NUMBER DESC</otherwise>
+                    </choose>
+                ) AS rowNum,
+                C.COMPANY_NUMBER AS companyNumber,
+                C.COMPANY_NAME AS companyName,
+                C.COMPANY_ADDRESS AS companyAddress,
+                NVL(CI.COMP_IMAGE_PATH, F.FILE_PATH) AS filePath,
+                CI.COMP_TYPE AS compType,
+                CI.COMP_SUMMARY AS compSummary,
+                TO_CHAR(CI.COMP_PAGE_DATE, 'YYYY-MM-DD') AS compPageDate,
+                NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
+                NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
+                NVL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
+                NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
             FROM TBL_COMPANY C
-            JOIN TBL_COMP_INFO CI ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
-            LEFT JOIN TBL_JOB_POST JP ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
+            JOIN TBL_COMP_INFO CI
+              ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
+            LEFT JOIN (
+                SELECT
+                    COMPANY_NUMBER,
+                    MIN(FILE_NUMBER) AS FILE_NUMBER
+                FROM TBL_FILE
+                GROUP BY COMPANY_NUMBER
+            ) FM
+              ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
+            LEFT JOIN TBL_FILE F
+              ON FM.FILE_NUMBER = F.FILE_NUMBER
+            LEFT JOIN TBL_JOB_POST JP
+              ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
             WHERE C.COMPANY_STATE = '승인'
             <if test="jobNumber != null">
                 <choose>

@@ -99,7 +99,7 @@
       <div class="mainpage-companyad-companycards">
         <a href="./../company/company-info.html" class="mainpage-companyad-companycard">
           <img src="../../../assets/img/기업이미지_샘플1.jpg" alt="" class="mainpage-companyad-companyimg">
-          <div class="mainpage-companyad-companycardtext">
+          <div class="mainpage-companyad-com`panycardtext">
             <div class="mainpage-companyad-companyname">기업명</div>
             <div class="mainpage-companyad-companysummary">기업한줄소개</div>
             <div class="mainpage-companyad-companyaddress">서울시 강남구</div>

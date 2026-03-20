@@ -22,7 +22,7 @@
             JOB_NUMBER AS jobNumber,
             JOB_NAME AS jobName
         FROM TBL_JOB_GROUP
-        ORDER BY JOB_NUMBER ASC <!-- 오름차순정렬 -->
+        ORDER BY JOB_NUMBER ASC
     </select>
 
     <!-- 메인 기업 홍보 카드 3개 조회 -->
@@ -36,7 +36,7 @@
                 C.COMPANY_ADDRESS AS companyAddress,
                 C.COMPANY_STATE AS companyState,
                 CI.COMP_SUMMARY AS compSummary,
-                F.FILE_PATH AS filePath,
+                NVL(CI.COMP_IMAGE_PATH, F.FILE_PATH) AS filePath,
                 TO_CHAR(CI.COMP_PAGE_DATE, 'YYYY-MM-DD') AS compPageDate,
                 NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
                 NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
@@ -121,8 +121,7 @@
         WHERE END_DATE >= TRUNC(SYSDATE)
         ORDER BY START_DATE ASC, EXPO_NUMBER ASC
     </select>
-    
-    <!-- 추가 노션에 없음 -->
+
     <insert id="insertMainAnswer"
         parameterType="JobTestSubmitDTO">
     INSERT INTO TBL_JOB_RESULT_ANSWER (

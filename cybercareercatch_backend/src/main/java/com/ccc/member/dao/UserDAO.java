@@ -16,4 +16,9 @@ public class UserDAO {
 		Integer userNumber = sqlSession.selectOne("user.login", userDTO);
 		return userNumber == null ? -1 : userNumber;
 	}
+
+	public boolean checkId(String userId) {
+	    int count = (int) sqlSession.selectOne("user.checkId", userId);
+	    return count == 0;
+	}
 }

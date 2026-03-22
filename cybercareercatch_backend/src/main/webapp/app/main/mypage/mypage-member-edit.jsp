@@ -42,7 +42,7 @@
 							<input type="text" name="userPhone" class="mypage-info-text"
 								id="member-phonenumber"
 								value="${memberMypageInfoDTO.userPhone}"
-								placeholder="01012345678"
+								placeholder="전화번호입력(-제외)"
 								maxlength="11"
 								required>
 							<div class="input-message" id="member-phonenumber-message">${phoneMessage}</div>

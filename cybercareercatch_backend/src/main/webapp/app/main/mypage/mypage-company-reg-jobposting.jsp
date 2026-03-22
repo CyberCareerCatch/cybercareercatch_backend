@@ -42,7 +42,7 @@
 						<div class="jobpost-section-content">
 							<input class="jobpost-section-inputcontent" type="text"
 								name="company_ceoname" id="company-ceoname"
-								placeholder="예 : 이재용" required>
+								placeholder="예 : 홍길동" maxlength="20" required>
 						</div>
 					</div>
 
@@ -87,7 +87,7 @@
 						<div class="jobpost-section-content">
 							<input class="jobpost-section-inputcontent" type="text"
 								name="company_type" id="company-type" placeholder="예 : 중견기업"
-								required>
+								maxlength="20" required>
 						</div>
 					</div>
 				</div>
@@ -101,7 +101,7 @@
 						<div class="jobpost-section-content">
 							<input class="jobpost-section-inputcontent" type="text"
 								name="company_description" id="company-description"
-								placeholder="예 : 보안서비스 개발 컨설팅 전문기업" required>
+								placeholder="예 : 보안서비스 개발 컨설팅 전문기업" maxlength="20" required>
 						</div>
 					</div>
 
@@ -109,7 +109,7 @@
 						<div class="jobpost-section-subtitle">기업정보</div>
 						<div class="jobpost-section-content-textarea">
 							<textarea name="company_info" id="company-info"
-								placeholder="기업의 상세 소개를 입력하세요" required></textarea>
+								placeholder="기업의 상세 소개를 입력하세요" maxlength="1000" required></textarea>
 						</div>
 					</div>
 
@@ -118,7 +118,7 @@
 						<div class="jobpost-section-content-textarea">
 							<textarea class="jobpost-section-content" name="company_tech"
 								id="company-tech" placeholder="사용 기술, 보유 기술, 핵심 역량 등을 입력하세요"
-								required></textarea>
+								maxlength="1000" required></textarea>
 						</div>
 					</div>
 
@@ -126,7 +126,7 @@
 						<div class="jobpost-section-subtitle">주요사업</div>
 						<div class="jobpost-section-content-textarea">
 							<textarea name="company_business" id="company-business"
-								placeholder="주요 서비스, 사업 분야 등을 입력하세요" required></textarea>
+								placeholder="주요 서비스, 사업 분야 등을 입력하세요" maxlength="1000" required></textarea>
 						</div>
 					</div>
 
@@ -134,7 +134,7 @@
 						<div class="jobpost-section-subtitle">서비스 확장 및 운영 이력</div>
 						<div class="jobpost-section-content-textarea">
 							<textarea name="company_history" id="company-history"
-								placeholder="주요 서비스, 사업 분야 등을 입력하세요" required></textarea>
+								placeholder="주요 서비스, 사업 분야 등을 입력하세요" maxlength="1000" required></textarea>
 						</div>
 					</div>
 				</div>
@@ -157,28 +157,28 @@
 					<div class="jobpost-section-box">
 						<div class="jobpost-section-subtitle">인재상</div>
 						<div class="jobpost-section-content-textarea">
-							<textarea name="company_talent" id="company-talent" required></textarea>
+							<textarea name="company_talent" id="company-talent" maxlength="1000" required></textarea>
 						</div>
 					</div>
 
 					<div class="jobpost-section-box">
 						<div class="jobpost-section-subtitle">채용부분</div>
 						<div class="jobpost-section-content-textarea">
-							<textarea name="company_jobpart" id="company-jobpart" required></textarea>
+							<textarea name="company_jobpart" id="company-jobpart" maxlength="1000" required></textarea>
 						</div>
 					</div>
 
 					<div class="jobpost-section-box">
 						<div class="jobpost-section-subtitle">채용 절차</div>
 						<div class="jobpost-section-content-textarea">
-							<textarea name="company_process" id="company-process" required></textarea>
+							<textarea name="company_process" id="company-process" maxlength="1000" required></textarea>
 						</div>
 					</div>
 
 					<div class="jobpost-section-box">
 						<div class="jobpost-section-subtitle">지원 정보</div>
 						<div class="jobpost-section-content-textarea">
-							<textarea name="company_apply" id="company-apply" required></textarea>
+							<textarea name="company_apply" id="company-apply" maxlength="1000" required></textarea>
 						</div>
 					</div>
 				</div>

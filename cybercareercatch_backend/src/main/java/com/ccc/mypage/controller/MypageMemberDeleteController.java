@@ -77,7 +77,7 @@ public class MypageMemberDeleteController implements Execute {
 		session.invalidate();
 
 		// 메인페이지 또는 로그인페이지로 이동
-		result.setPath(request.getContextPath() + "/main/main.mafc");
+		result.setPath(request.getContextPath() + "/mainpage/mainpage.mafc");
 		result.setRedirect(true);
 
 		return result;

@@ -68,7 +68,7 @@
 							<input type="text" name="userPhone" class="mypage-info-text"
 								id="company-manager-phonenumber"
 								value="${companyMypageInfoDTO.userPhone}"
-								placeholder="01012345678" maxlength="11" required>
+								placeholder="전화번호입력(-제외)" maxlength="11" required>
 							<div class="input-message" id="company-phonenumber-message">${phoneMessage}</div>
 						</div>
 						<button type="button" class="btn"

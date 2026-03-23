@@ -112,7 +112,7 @@
                 JP.*,
                 ROW_NUMBER() OVER (
                     PARTITION BY JP.COMPANY_NUMBER
-                    ORDER BY JP.JOB_POST_DATE DESC, JP.JOB_POST_NUMBER DESC
+                    ORDER BY JP.JOB_POST_DATE DESC
                 ) AS RN
             FROM TBL_JOB_POST JP
         )

@@ -24,7 +24,8 @@ public class MainpageController implements Execute {
 	private static final int MAX_QUESTION_COUNT = 10;
 
 	@Override
-	public Result execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public Result execute(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		MainpageDAO mainpageDAO = new MainpageDAO();
 		Result result = new Result();
@@ -40,32 +41,9 @@ public class MainpageController implements Execute {
 
 		int questionCount = getQuestionCount(mainpageDAO);
 
-<<<<<<< HEAD
-		JobRecommendQuestionDTO jrqDTO = new JobRecommendQuestionDTO();
-		jrqDTO.setJobQuestionNumber(1);
-		mainQuestion = mainpageDAO.selectMainQuestion(jrqDTO); // 메인 상단에 보여줄 질문 1개를 조회한다.
-		mainJobGroupList = mainpageDAO.selectMainJobGroupList(); // 메인 추천 직군 4개를 조회한다.
-		mainCompanyList = mainpageDAO.selectMainCompanyList(); // 메인 기업 홍보 카드 3개를 조회한다.
-		mainFreePostList = mainpageDAO.selectMainFreePostList(); // 메인 자유게시판 최신글 5개를 조회한다.
-		mainQnaList = mainpageDAO.selectMainQnaList(); // 메인 기업 Q&A 최신글 5개를 조회한다.
-		mainExpoList = mainpageDAO.selectMainExpoList(); // 메인 박람회 일정 목록을 조회한다.
-
-		request.setAttribute("mainQuestion", mainQuestion); // 조회한 메인 질문 1개를 request 영역에 저장한다.
-		request.setAttribute("mainJobGroupList", mainJobGroupList); // 조회한 추천 직군 목록을 request 영역에 저장한다.
-		request.setAttribute("mainCompanyList", mainCompanyList); // 조회한 기업 홍보 카드 목록을 request 영역에 저장한다.
-		request.setAttribute("mainFreePostList", mainFreePostList); // 조회한 자유게시판 최신글 목록을 request 영역에 저장한다.
-		request.setAttribute("mainQnaList", mainQnaList); // 조회한 기업 Q&A 최신글 목록을 request 영역에 저장한다.
-		request.setAttribute("mainExpoList", mainExpoList); // 조회한 박람회 일정 목록을 request 영역에 저장한다.
-
-		if (isLogin) { // 로그인 상태인 경우이다.
-			result.setPath("/app/main/mainpage/mainpage-login.jsp"); // 로그인 상태용 메인 JSP 경로를 설정한다.
-		} else { // 로그인하지 않은 상태인 경우이다.
-			result.setPath("/app/main/mainpage/mainpage-logout.jsp"); // 로그아웃 상태용 메인 JSP 경로를 설정한다.
-=======
 		Integer currentQuestionNumber = (Integer) session.getAttribute("mainCurrentQuestionNumber");
 		if (currentQuestionNumber == null || currentQuestionNumber < 1 || currentQuestionNumber > questionCount) {
 			currentQuestionNumber = DEFAULT_QUESTION_NUMBER;
->>>>>>> 8158ab0 (260322 김진옥메인 수정)
 		}
 
 		JobRecommendQuestionDTO mainQuestion = mainpageDAO.selectMainQuestion(currentQuestionNumber);
@@ -92,8 +70,7 @@ public class MainpageController implements Execute {
 		request.setAttribute("mainIsTestInProgress", session.getAttribute("mainJobResultNumber") != null);
 
 		if (isComplete) {
-			request.setAttribute("mainAlertMessage",
-					"답변이 완료 되었습니다. 결과는 3일~5일정도 소요됩니다. 마이페이지에서 확인하실 수 있습니다");
+			request.setAttribute("mainAlertMessage", "답변이 완료 되었습니다. 결과는 3일~5일정도 소요됩니다. 마이페이지에서 확인하실 수 있습니다");
 		} else if ("true".equals(request.getParameter("emptyAnswer"))) {
 			request.setAttribute("mainAlertMessage", "답변을 입력해주세요.");
 		} else if ("true".equals(request.getParameter("loginRequired"))) {

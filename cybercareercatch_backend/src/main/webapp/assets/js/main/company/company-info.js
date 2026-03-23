@@ -1,27 +1,18 @@
-/*
- * 관리자 기업 정보페이지 목록 전용 스크립트이다.
- * 목록에서 체크 후 바로 삭제할 수 있도록 처리한다.
- */
 document.addEventListener("DOMContentLoaded", function () {
-    const deleteForm = document.getElementById("companyDeleteForm");
+    const qnaBox = document.querySelector(".cmp-qna-box");
 
-    if (!deleteForm) {
+    if (!qnaBox) {
         return;
     }
 
-    deleteForm.addEventListener("submit", function (event) {
-        const checkedList = deleteForm.querySelectorAll("input[name='companyNumber']:checked");
+    qnaBox.addEventListener("click", function () {
+        const targetUrl = qnaBox.dataset.url;
+        const loginRequired = qnaBox.dataset.loginRequired === "true";
 
-        if (checkedList.length === 0) {
-            alert("삭제할 기업 정보페이지를 선택하세요.");
-            event.preventDefault();
-            return;
+        if (loginRequired) {
+            alert("로그인 후 이용할 수 있습니다.");
         }
 
-        const isConfirmed = confirm("선택한 기업 정보페이지를 삭제하시겠습니까?");
-
-        if (!isConfirmed) {
-            event.preventDefault();
-        }
+        window.location.href = targetUrl;
     });
 });

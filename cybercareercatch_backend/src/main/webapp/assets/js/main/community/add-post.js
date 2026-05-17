@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 제목 최소/최대 글자 수
   const TITLE_MIN = 10;
-  const TITLE_MAX = 66;
+  const TITLE_MAX = 65;
 
   // 내용 최소/최대 글자 수
   const CONTENT_MIN = 10;
@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
       input.value = input.value.substring(0, max);
 
       if (type === "title" && !titleAlertShown) {
-        alert("제목은 더이상 입력할 수 없습니다. 최대 66자까지 입력 가능합니다.");
+        alert("제목은 더이상 입력할 수 없습니다. 최대 65자까지 입력 가능합니다.");
         titleAlertShown = true;
       }
 
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 제목이 66자 초과면 제출 막기
     if (title.length > TITLE_MAX) {
       e.preventDefault();
-      alert("제목은 최대 66자까지 입력 가능합니다.");
+      alert("제목은 최대 65자까지 입력 가능합니다.");
       titleInput.focus();
       return;
     }

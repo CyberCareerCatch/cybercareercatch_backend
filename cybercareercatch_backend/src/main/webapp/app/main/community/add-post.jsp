@@ -53,14 +53,14 @@
 				<div class="cmw-row">
 					<label class="cmw-lbl" for="postTitle">제목</label> <input
 						type="text" id="postTitle" name="postTitle" class="cmw-inp"
-						placeholder="제목을 입력해주세요" required value="${param.postTitle}">
-					<div id="titleCount">0 / 66</div>
+						placeholder="제목은 10자 이상 65자 이하로 입력해주세요" required value="${param.postTitle}">
+					<div id="titleCount">0 / 65</div>
 				</div>
 
 				<div class="cmw-row">
 					<label class="cmw-lbl" for="postContent">내용</label>
 					<textarea id="postContent" name="postContent" class="cmw-ta"
-						placeholder="자유롭게 내용을 입력하세요" required>${param.postContent}</textarea>
+						placeholder="내용은 10자 이상 1000자 이하로 입력해주세요" required>${param.postContent}</textarea>
 					<div id="contentCount">0 / 1000</div>
 				</div>
 

@@ -62,6 +62,14 @@ public class MypageMemberEditPhonenumController implements Execute {
 			result.setRedirect(false);
 			return result;
 		}
+		
+		if (mypageDAO.isDuplicatePhone(userNumber, newPhone)) {
+			request.setAttribute("phoneMessage", "이미 사용 중인 전화번호입니다.");
+			request.setAttribute("memberMypageInfoDTO", mypageDAO.selectMemberMypageInfo(userNumber));
+			result.setPath("/app/main/mypage/mypage-member-edit.jsp");
+			result.setRedirect(false);
+			return result;
+		}
 
 		mypageDAO.updateMemberPhone(userNumber, newPhone);
 		System.out.println("변경할 전화번호 : " + newPhone);

@@ -39,6 +39,16 @@ public class MypageDAO {
 
 		return (Integer)sqlSession.selectOne("mypage.checkMemberPw", paramMap) > 0;
 	}
+	
+	// 마이페이지 전화번호 중복 확인
+	public boolean isDuplicatePhone(int userNumber, String userPhone) {
+		System.out.println("마이페이지 전화번호 중복 확인 메소드 실행");
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("userNumber", userNumber);
+		paramMap.put("userPhone", userPhone);
+
+		return (Integer) sqlSession.selectOne("mypage.isDuplicatePhone", paramMap) > 0;
+	}
 
 	// 일반회원 전화번호 수정
 	public void updateMemberPhone(int userNumber, String userPhone) {

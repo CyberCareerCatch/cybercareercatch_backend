@@ -54,6 +54,15 @@
 		AND USER_TYPE = '일반회원'
 	</select>
 
+	<!-- 마이페이지 - 전화번호 중복 확인 -->
+	<select id="isDuplicatePhone" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM TBL_USER
+		WHERE USER_PHONE = #{userPhone}
+		AND USER_NUMBER != #{userNumber}
+	</select>
+
 	<!-- 일반회원 마이페이지 - 전화번호 수정 -->
 	<!-- 사용페이지 : memberMypageEdit.jsp -->
 	<update id="updateMemberPhone" parameterType="map">
@@ -261,9 +270,11 @@
 		resultType="com.ccc.company.dto.CompanyDetailDTO">
 		SELECT
 		C.COMPANY_NUMBER AS companyNumber,
-		C.COMPANY_NAME AS companyName,
+		C.COMPANY_NAME AS
+		companyName,
 		C.COMPANY_ADDRESS AS companyAddress,
-		C.COMPANY_STATE AS companyState,
+		C.COMPANY_STATE AS
+		companyState,
 		C.COMPANY_BRN AS companyBrn,
 		F.FILE_PATH AS filePath,
 		CI.COMP_CEO_NAME
@@ -272,19 +283,23 @@
 		CI.COMP_EMPL_CNT AS
 		compEmplCnt,
 		CI.COMP_REV AS compRev,
-		CI.COMP_CAP AS compCap,
+		CI.COMP_CAP AS
+		compCap,
 		CI.COMP_TYPE AS compType,
 		CI.COMP_SUMMARY AS compSummary,
 		CI.COMP_TECH
 		AS compTech,
 		CI.COMP_MAIN_BIZ AS compMainBiz,
-		CI.COMP_INFO AS compInfo,
+		CI.COMP_INFO
+		AS compInfo,
 		CI.COMP_SVC_HIST AS compSvcHist,
-		JP.JOB_POST_PROFILE AS jobPostProfile,
+		JP.JOB_POST_PROFILE AS
+		jobPostProfile,
 		JP.JOB_POST_CONTENT AS jobPostContent,
 		JP.JOB_POST_PROCESS AS
 		jobPostProcess,
-		JP.JOB_POST_METHOD AS jobPostMethod,
+		JP.JOB_POST_METHOD AS
+		jobPostMethod,
 		TO_CHAR(JP.JOB_POST_DATE, 'YYYY.MM.DD') AS jobPostDate,
 		JP.CAT1_IS_HIRING AS cat1IsHiring,
 		JP.CAT2_IS_HIRING AS cat2IsHiring,
@@ -292,21 +307,27 @@
 		JP.CAT4_IS_HIRING AS cat4IsHiring
 		FROM TBL_COMPANY_MEMBER CM
 		JOIN TBL_COMPANY C
-		ON CM.COMPANY_NUMBER = C.COMPANY_NUMBER
+		ON CM.COMPANY_NUMBER =
+		C.COMPANY_NUMBER
 		JOIN TBL_COMP_INFO CI
-		ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER =
+		CI.COMPANY_NUMBER
 		LEFT JOIN (
 		SELECT
 		COMPANY_NUMBER,
-		MIN(FILE_NUMBER) AS FILE_NUMBER
+		MIN(FILE_NUMBER) AS
+		FILE_NUMBER
 		FROM TBL_FILE
 		GROUP BY COMPANY_NUMBER
 		) FM
-		ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER
+		= FM.COMPANY_NUMBER
 		LEFT JOIN TBL_FILE F
-		ON FM.FILE_NUMBER = F.FILE_NUMBER
+		ON FM.FILE_NUMBER =
+		F.FILE_NUMBER
 		LEFT JOIN TBL_JOB_POST JP
-		ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER =
+		JP.COMPANY_NUMBER
 		WHERE CM.USER_NUMBER = #{value}
 	</select>
 
@@ -503,7 +524,8 @@
 	</delete>
 
 	<delete id="deleteMemberByUserNumber" parameterType="int">
-		DELETE FROM TBL_USER
+		DELETE FROM
+		TBL_USER
 		WHERE USER_NUMBER = #{value}
 		AND USER_TYPE = '일반회원'
 	</delete>

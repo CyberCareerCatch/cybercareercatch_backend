@@ -73,6 +73,17 @@ public class MypageCompanyEditPhonenumController implements Execute {
 			return result;
 		}
 
+		if (mypageDAO.isDuplicatePhone(userNumber, newPhone)) {
+			request.setAttribute("phoneMessage", "이미 사용 중인 전화번호입니다.");
+
+			CompanyMypageInfoDTO companyMypageInfoDTO = mypageDAO.selectCompanyMemberMypageInfo(userNumber);
+			request.setAttribute("companyMypageInfoDTO", companyMypageInfoDTO);
+
+			result.setPath("/app/main/mypage/mypage-company-edit.jsp");
+			result.setRedirect(false);
+			return result;
+		}
+
 		mypageDAO.updateCompanyPhone(userNumber, newPhone);
 		System.out.println("변경할 전화번호 : " + newPhone);
 		System.out.println("기업회원 전화번호 변경 완료");

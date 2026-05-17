@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const submitBtn = document.querySelector(".cmw-btn");          // ← 추가
 
 	const TITLE_MIN = 10;
-	const TITLE_MAX = 100;
+	const TITLE_MAX = 65;
 	const CONTENT_MIN = 10;
 	const CONTENT_MAX = 1000;
 	
@@ -76,8 +76,8 @@ document.addEventListener("DOMContentLoaded", () => {
 				return;
 			}
 
-			if (postTitle.length < 10 || postTitle.length > 100) {
-				alert("제목은 10자 이상 100자 이하로 입력해주세요.");
+			if (postTitle.length < 10 || postTitle.length > 65) {
+				alert("제목은 10자 이상 65자 이하로 입력해주세요.");
 				return;
 			}
 

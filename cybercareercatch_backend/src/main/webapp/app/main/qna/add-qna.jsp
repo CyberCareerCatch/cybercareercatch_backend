@@ -44,8 +44,8 @@
 				<div class="qnw-row">
 					<label class="qnw-lbl" for="postTitle">제목</label> <input
 						class="qnw-inp" type="text" name="postTitle" id="postTitle"
-						placeholder="제목은 10자 이상 100자 이하로 입력해주세요" required> <span
-						id="titleCount">0 / 100</span>
+						placeholder="제목은 10자 이상 65자 이하로 입력해주세요" required> <span
+						id="titleCount">0 / 65</span>
 				</div>
 
 				<div class="qnw-row qnw-row-col">

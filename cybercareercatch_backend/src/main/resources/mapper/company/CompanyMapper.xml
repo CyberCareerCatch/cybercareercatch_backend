@@ -9,39 +9,37 @@
 	<select id="selectCompanyList" parameterType="map"
 		resultType="CompanyCardDTO">
 		<![CDATA[
-		SELECT * FROM (
-			SELECT ROWNUM AS RNUM, A.*
-			FROM (
+		SELECT *
+		FROM (
+			SELECT
+				ROW_NUMBER() OVER (ORDER BY C.COMPANY_NUMBER DESC) AS RNUM,
+				C.COMPANY_NUMBER AS companyNumber,
+				C.COMPANY_NAME AS companyName,
+				C.COMPANY_ADDRESS AS companyAddress,
+				C.COMPANY_STATE AS companyState,
+				CI.COMP_SUMMARY AS compSummary,
+				F.FILE_PATH AS filePath,
+				DATE_FORMAT(CI.COMP_PAGE_DATE, '%Y-%m-%d') AS compPageDate,
+				IFNULL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
+				IFNULL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
+				IFNULL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
+				IFNULL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
+			FROM TBL_COMPANY C
+			LEFT JOIN TBL_COMP_INFO CI
+			  ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
+			LEFT JOIN (
 				SELECT
-					C.COMPANY_NUMBER AS companyNumber,
-					C.COMPANY_NAME AS companyName,
-					C.COMPANY_ADDRESS AS companyAddress,
-					C.COMPANY_STATE AS companyState,
-					CI.COMP_SUMMARY AS compSummary,
-					F.FILE_PATH AS filePath,
-					TO_CHAR(CI.COMP_PAGE_DATE, 'YYYY-MM-DD') AS compPageDate,
-					NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
-					NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
-					NVL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
-					NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
-				FROM TBL_COMPANY C
-				LEFT JOIN TBL_COMP_INFO CI
-				  ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
-				LEFT JOIN (
-					SELECT
-						COMPANY_NUMBER,
-						MIN(FILE_NUMBER) AS FILE_NUMBER
-					FROM TBL_FILE
-					GROUP BY COMPANY_NUMBER
-				) FM
-				  ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
-				LEFT JOIN TBL_FILE F
-				  ON FM.FILE_NUMBER = F.FILE_NUMBER
-				LEFT JOIN TBL_JOB_POST JP
-				  ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
-				ORDER BY C.COMPANY_NUMBER DESC
-			) A
-		)
+					COMPANY_NUMBER,
+					MIN(FILE_NUMBER) AS FILE_NUMBER
+				FROM TBL_FILE
+				GROUP BY COMPANY_NUMBER
+			) FM
+			  ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
+			LEFT JOIN TBL_FILE F
+			  ON FM.FILE_NUMBER = F.FILE_NUMBER
+			LEFT JOIN TBL_JOB_POST JP
+			  ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
+		) A
 		WHERE RNUM BETWEEN #{startRow} AND #{endRow}
 		]]>
 	</select>
@@ -54,7 +52,7 @@
 		JOIN TBL_COMP_INFO CI
 		ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
 		<if test="_parameter != null and _parameter != ''">
-			WHERE C.COMPANY_NAME LIKE '%' || #{_parameter} || '%'
+			WHERE C.COMPANY_NAME LIKE CONCAT('%', #{_parameter}, '%')
 		</if>
 	</select>
 
@@ -91,12 +89,12 @@
 		JP.JOB_POST_PROCESS AS jobPostProcess,
 		JP.JOB_POST_METHOD AS
 		jobPostMethod,
-		TO_CHAR(JP.JOB_POST_DATE, 'YYYY.MM.DD') AS jobPostDate,
-		NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
-		NVL(JP.CAT2_IS_HIRING, 0) AS
+		DATE_FORMAT(JP.JOB_POST_DATE, '%Y.%m.%d') AS jobPostDate,
+		IFNULL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
+		IFNULL(JP.CAT2_IS_HIRING, 0) AS
 		cat2IsHiring,
-		NVL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
-		NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
+		IFNULL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
+		IFNULL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
 
 		FROM TBL_COMPANY C
 
@@ -116,21 +114,7 @@
 		LEFT JOIN TBL_FILE F
 		ON FM.FILE_NUMBER = F.FILE_NUMBER
 
-		LEFT JOIN (
-		SELECT *
-		FROM (
-		SELECT
-		JP.*,
-		ROW_NUMBER() OVER (
-		PARTITION BY
-		JP.COMPANY_NUMBER
-		ORDER BY JP.JOB_POST_DATE DESC
-		) AS RN
-		FROM
-		TBL_JOB_POST JP
-		)
-		WHERE RN = 1
-		) JP
+		LEFT JOIN TBL_JOB_POST JP
 		ON C.COMPANY_NUMBER =
 		JP.COMPANY_NUMBER
 
@@ -153,16 +137,19 @@
 
 	<insert id="addCompany">
 		INSERT INTO TBL_COMPANY (
-		COMPANY_NUMBER, COMPANY_BRN,
-		COMPANY_NAME, COMPANY_ADDRESS, COMPANY_STATE
+		COMPANY_BRN,
+		COMPANY_NAME,
+		COMPANY_ADDRESS,
+		COMPANY_STATE
 		) VALUES (
-		SEQ_COMPANY_NUMBER.NEXTVAL, #{companyBrn}, #{companyName},
+		#{companyBrn}, #{companyName},
 		#{companyAddress}, '대기'
 		)
 	</insert>
 
-	<select id="checkBusinessNumber" parameterType="String"
+	<select id="checkBusinessNumber" parameterType="string"
 		resultType="int">
-		SELECT COUNT(*) FROM TBL_COMPANY WHERE COMPANY_BRN = #{companyBrn}
+		SELECT COUNT(*) FROM TBL_COMPANY WHERE COMPANY_BRN = #{_parameter}
 	</select>
+
 </mapper>

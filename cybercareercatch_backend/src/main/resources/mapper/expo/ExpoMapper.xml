@@ -2,22 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="expo">
 
-   <select id="selectExpoList" parameterType="map" resultType="com.ccc.expo.dto.ExpoListDTO">
+   <select id="selectExpoList" parameterType="map" resultType="ExpoListDTO">
       <![CDATA[
-      SELECT * FROM (
-         SELECT ROWNUM AS RNUM, A.*
-         FROM (
-            SELECT
-               EXPO_NUMBER,
-               EXPO_NAME,
-               TO_CHAR(START_DATE, 'YYYY-MM-DD') AS START_DATE,
-			   TO_CHAR(END_DATE, 'YYYY-MM-DD') AS END_DATE,
-               LOCATION,
-               TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE
-            FROM TBL_EXPO
-            ORDER BY EXPO_NUMBER DESC
-         ) A
-      )
+      SELECT *
+      FROM (
+         SELECT
+            ROW_NUMBER() OVER (ORDER BY EXPO_NUMBER DESC) AS RNUM,
+            EXPO_NUMBER,
+            EXPO_NAME,
+            DATE_FORMAT(START_DATE, '%Y-%m-%d') AS START_DATE,
+            DATE_FORMAT(END_DATE, '%Y-%m-%d') AS END_DATE,
+            LOCATION,
+            DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE
+         FROM TBL_EXPO
+      ) A
       WHERE RNUM BETWEEN #{startRow} AND #{endRow}
       ]]>
    </select>
@@ -29,9 +27,8 @@
    </select>
 
 	<!-- 박람회 등록 -->
-	<insert id="insertExpo" parameterType="com.ccc.expo.dto.ExpoDTO">
+	<insert id="insertExpo" parameterType="ExpoDTO">
 		INSERT INTO TBL_EXPO (
-			EXPO_NUMBER,
 			ADMIN_NUMBER,
 			EXPO_NAME,
 			START_DATE,
@@ -40,13 +37,12 @@
 			REG_DATE
 		)
 		VALUES (
-			SEQ_EXPO_NUMBER.NEXTVAL,
 			#{adminNumber},
 			#{expoName},
-			TO_DATE(#{startDate}, 'YYYY-MM-DD'),
-			TO_DATE(#{endDate}, 'YYYY-MM-DD'),
+			STR_TO_DATE(#{startDate}, '%Y-%m-%d'),
+			STR_TO_DATE(#{endDate}, '%Y-%m-%d'),
 			#{location},
-			SYSDATE
+			NOW()
 		)
 	</insert>
 
@@ -57,21 +53,21 @@
    </delete>
 
 	<!-- 박람회 기본 정보 -->
-	<select id="selectExpoInfo" parameterType="int" resultType="com.ccc.expo.dto.ExpoDTO">
+	<select id="selectExpoInfo" parameterType="int" resultType="ExpoDTO">
 		SELECT
 			EXPO_NUMBER,
 			ADMIN_NUMBER,
 			EXPO_NAME,
-			TO_CHAR(START_DATE, 'YYYY-MM-DD') AS START_DATE,
-			TO_CHAR(END_DATE, 'YYYY-MM-DD') AS END_DATE,
+			DATE_FORMAT(START_DATE, '%Y-%m-%d') AS START_DATE,
+			DATE_FORMAT(END_DATE, '%Y-%m-%d') AS END_DATE,
 			LOCATION,
-			TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS REG_DATE
+			DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS REG_DATE
 		FROM TBL_EXPO
 		WHERE EXPO_NUMBER = #{expoNumber}
 	</select>
 
 	<!-- 클릭 시 박람회 상세 + 참여 기업 목록 -->
-	<select id="selectExpoDetailList" parameterType="int" resultType="com.ccc.expo.dto.ExpoDetailDTO">
+	<select id="selectExpoDetailList" parameterType="int" resultType="ExpoDetailDTO">
 		SELECT
 			E.EXPO_NUMBER,
 			E.EXPO_NAME,
@@ -89,7 +85,7 @@
 	</select>
 
 	<!-- 박람회에 아직 추가되지 않은 승인 기업 목록 -->
-	<select id="selectAvailableCompanyList" parameterType="int" resultType="com.ccc.company.dto.CompanyDTO">
+	<select id="selectAvailableCompanyList" parameterType="int" resultType="CompanyDTO">
 		SELECT
 			COMPANY_NUMBER,
 			COMPANY_BRN,
@@ -120,7 +116,7 @@
 	</insert>
 
 	<!-- 달력에 뿌릴 박람회 일정 목록 -->
-	<select id="selectExpoCalendarList" resultType="com.ccc.expo.dto.ExpoCalendarDTO">
+	<select id="selectExpoCalendarList" resultType="ExpoCalendarDTO">
 		SELECT
 			EXPO_NUMBER,
 			EXPO_NAME,

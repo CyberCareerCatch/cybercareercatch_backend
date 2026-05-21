@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="mypage">
+
 	<!-- 일반회원 마이페이지 - 정보조회 -->
 	<!-- memberMyPage.jsp에서 사용 -->
 	<select id="selectMemberMypageInfo" parameterType="int"
@@ -10,35 +12,32 @@
 		U.USER_ID AS userId,
 		U.USER_NAME AS userName,
 		U.USER_PHONE AS userPhone,
-		TO_CHAR(M.MEMBER_DOB, 'YYYY.MM.DD') AS memberDob,
-		M.MEMBER_GENDER AS
-		memberGender,
+		DATE_FORMAT(M.MEMBER_DOB, '%Y.%m.%d') AS memberDob,
+		M.MEMBER_GENDER AS memberGender,
 		M.JOB_NUMBER AS jobNumber,
 		J.JOB_NAME AS jobName,
-		TO_CHAR(JR.JOB_RESULT_CONFIRM_DATE, 'YYYY.MM.DD') AS jobConfirmDate
+		DATE_FORMAT(JR.JOB_RESULT_CONFIRM_DATE, '%Y.%m.%d') AS jobConfirmDate
 		FROM TBL_USER U
 		JOIN TBL_MEMBER M
 		ON U.USER_NUMBER = M.USER_NUMBER
-		LEFT
-		JOIN TBL_JOB_GROUP J
+		LEFT JOIN TBL_JOB_GROUP J
 		ON M.JOB_NUMBER = J.JOB_NUMBER
 		LEFT JOIN (
 		SELECT
 		USER_NUMBER,
 		JOB_RESULT_CONFIRM_DATE,
 		ROW_NUMBER() OVER (
-		PARTITION BY
-		USER_NUMBER
-		ORDER BY JOB_RESULT_CONFIRM_DATE DESC NULLS LAST,
+		PARTITION BY USER_NUMBER
+		ORDER BY
+		(JOB_RESULT_CONFIRM_DATE IS NULL) ASC,
+		JOB_RESULT_CONFIRM_DATE DESC,
 		JOB_RESULT_NUMBER DESC
 		) AS RN
 		FROM TBL_JOB_RESULT
-		WHERE
-		JOB_RESULT_STATUS = '판정완료'
+		WHERE JOB_RESULT_STATUS = '판정완료'
 		) JR
 		ON M.USER_NUMBER = JR.USER_NUMBER
-		AND
-		JR.RN = 1
+		AND JR.RN = 1
 		WHERE U.USER_NUMBER = #{value}
 	</select>
 
@@ -47,10 +46,8 @@
 	<select id="checkMemberPw" parameterType="map" resultType="int">
 		SELECT COUNT(*)
 		FROM TBL_USER
-		WHERE USER_NUMBER =
-		#{userNumber}
-		AND
-		USER_PW = #{userPw}
+		WHERE USER_NUMBER = #{userNumber}
+		AND USER_PW = #{userPw}
 		AND USER_TYPE = '일반회원'
 	</select>
 
@@ -70,8 +67,7 @@
 		SET
 		USER_PHONE = #{userPhone}
 		WHERE USER_NUMBER = #{userNumber}
-		AND
-		USER_TYPE = '일반회원'
+		AND USER_TYPE = '일반회원'
 	</update>
 
 	<!-- 일반회원 마이페이지 - 비밀번호 수정 -->
@@ -81,9 +77,7 @@
 		SET
 		USER_PW = #{newUserPw}
 		WHERE USER_NUMBER = #{userNumber}
-		AND
-		USER_TYPE =
-		'일반회원'
+		AND USER_TYPE = '일반회원'
 	</update>
 
 	<!-- 일반회원 마이페이지 - 나의 Q&A글 조회 -->
@@ -92,25 +86,19 @@
 		resultType="MypageQnaListDTO">
 		SELECT
 		P.POST_NUMBER AS postNumber,
-		P.POST_TITLE AS
-		postTitle,
+		P.POST_TITLE AS postTitle,
 		C.COMPANY_NAME AS companyName,
 		U.USER_ID AS userId,
-		TO_CHAR(P.POST_DATE, 'YYYY.MM.DD') AS postDate,
-		P.ANSWER_STATUS AS
-		answerStatus
+		DATE_FORMAT(P.POST_DATE, '%Y.%m.%d') AS postDate,
+		P.ANSWER_STATUS AS answerStatus
 		FROM TBL_POST P
 		JOIN TBL_USER U
-		ON P.USER_NUMBER =
-		U.USER_NUMBER
+		ON P.USER_NUMBER = U.USER_NUMBER
 		JOIN TBL_COMPANY C
-		ON
-		P.COMPANY_NUMBER = C.COMPANY_NUMBER
+		ON P.COMPANY_NUMBER = C.COMPANY_NUMBER
 		WHERE P.USER_NUMBER = #{value}
 		AND P.POST_TYPE = 'QNA_POST'
-		ORDER
-		BY
-		P.POST_NUMBER DESC
+		ORDER BY P.POST_NUMBER DESC
 	</select>
 
 	<!-- 일반회원 마이페이지 - 나의 Q&A글 총 개수 조회 -->
@@ -120,23 +108,20 @@
 		COUNT(*)
 		FROM TBL_POST
 		WHERE POST_TYPE = 'QNA_POST'
-		AND USER_NUMBER =
-		#{value}
+		AND USER_NUMBER = #{value}
 	</select>
 
 	<!-- 일반회원 마이페이지 - Q&A글 삭제 -->
 	<delete id="deleteMyQnaPosts" parameterType="map">
 		DELETE FROM TBL_POST
 		WHERE USER_NUMBER = #{userNumber}
-		AND POST_TYPE =
-		'QNA_POST'
+		AND POST_TYPE = 'QNA_POST'
 		AND POST_NUMBER IN
 		<foreach collection="postNumbers" item="postNumber" open="("
 			separator="," close=")">
 			#{postNumber}
 		</foreach>
 	</delete>
-
 
 	<!-- 기업회원 마이페이지 - 기본정보조회 -->
 	<!-- 사용 페이지: companyMyPage.jsp -->
@@ -147,23 +132,18 @@
 		U.USER_ID AS userId,
 		U.USER_NAME AS userName,
 		U.USER_PHONE AS userPhone,
-		C.COMPANY_NUMBER AS
-		companyNumber,
+		C.COMPANY_NUMBER AS companyNumber,
 		C.COMPANY_NAME AS companyName,
-		C.COMPANY_BRN AS
-		companyBrn,
+		C.COMPANY_BRN AS companyBrn,
 		C.COMPANY_ADDRESS AS companyAddress,
-		C.COMPANY_STATE AS
-		companyState,
+		C.COMPANY_STATE AS companyState,
 		CM.COMPANY_MANAGER_STATE AS companyManagerState
-		FROM
-		TBL_USER U
+		FROM TBL_USER U
 		JOIN TBL_COMPANY_MEMBER CM
 		ON U.USER_NUMBER = CM.USER_NUMBER
 		JOIN TBL_COMPANY C
 		ON CM.COMPANY_NUMBER = C.COMPANY_NUMBER
-		WHERE
-		U.USER_NUMBER = #{value}
+		WHERE U.USER_NUMBER = #{value}
 	</select>
 
 	<!-- 기업회원 마이페이지 - 답변대기 QnA 목록 조회 -->
@@ -174,31 +154,22 @@
 		P.POST_NUMBER AS postNumber,
 		P.POST_TITLE AS postTitle,
 		C.COMPANY_NAME AS companyName,
-		U.USER_ID AS
-		userId,
-		TO_CHAR(P.POST_DATE, 'YYYY.MM.DD') AS postDate,
-		P.ANSWER_STATUS
-		AS answerStatus
-		FROM
-		TBL_POST P
+		U.USER_ID AS userId,
+		DATE_FORMAT(P.POST_DATE, '%Y.%m.%d') AS postDate,
+		P.ANSWER_STATUS AS answerStatus
+		FROM TBL_POST P
 		JOIN TBL_USER U
-		ON P.USER_NUMBER =
-		U.USER_NUMBER
-		JOIN
-		TBL_COMPANY C
+		ON P.USER_NUMBER = U.USER_NUMBER
+		JOIN TBL_COMPANY C
 		ON P.COMPANY_NUMBER = C.COMPANY_NUMBER
-		JOIN
-		TBL_COMPANY_MEMBER CM
+		JOIN TBL_COMPANY_MEMBER CM
 		ON C.COMPANY_NUMBER = CM.COMPANY_NUMBER
-		WHERE
-		P.POST_TYPE = 'QNA_POST'
+		WHERE P.POST_TYPE = 'QNA_POST'
 		AND P.ANSWER_STATUS = '답변대기'
-		AND CM.USER_NUMBER
-		= #{value}
+		AND CM.USER_NUMBER = #{value}
 		AND CM.COMPANY_MANAGER_STATE = 'ACTIVE'
 		ORDER BY
-		P.POST_DATE
-		DESC,
+		P.POST_DATE DESC,
 		P.POST_NUMBER DESC
 	</select>
 
@@ -208,14 +179,11 @@
 		COUNT(*)
 		FROM TBL_POST P
 		JOIN TBL_COMPANY_MEMBER CM
-		ON P.COMPANY_NUMBER =
-		CM.COMPANY_NUMBER
+		ON P.COMPANY_NUMBER = CM.COMPANY_NUMBER
 		WHERE P.POST_TYPE = 'QNA_POST'
-		AND P.ANSWER_STATUS =
-		'답변대기'
+		AND P.ANSWER_STATUS = '답변대기'
 		AND CM.USER_NUMBER = #{value}
-		AND CM.COMPANY_MANAGER_STATE =
-		'ACTIVE'
+		AND CM.COMPANY_MANAGER_STATE = 'ACTIVE'
 	</select>
 
 	<!-- 기업회원 마이페이지 - 정보수정 전 비밀번호 확인 -->
@@ -223,11 +191,9 @@
 	<select id="checkCompanyPw" parameterType="map" resultType="int">
 		SELECT COUNT(*)
 		FROM TBL_USER
-		WHERE USER_NUMBER =
-		#{userNumber}
-		AND
-		USER_PW = #{userPw}
-		AND USER_TYPE ='기업회원'
+		WHERE USER_NUMBER = #{userNumber}
+		AND USER_PW = #{userPw}
+		AND USER_TYPE = '기업회원'
 	</select>
 
 	<!-- 기업회원 마이페이지 - 전화번호 수정 -->
@@ -236,8 +202,7 @@
 		UPDATE TBL_USER
 		SET USER_PHONE = #{userPhone}
 		WHERE USER_NUMBER = #{userNumber}
-		AND
-		USER_TYPE = '기업회원'
+		AND USER_TYPE = '기업회원'
 	</update>
 
 	<!-- 기업회원 마이페이지 - 비밀번호 수정 -->
@@ -247,9 +212,7 @@
 		SET
 		USER_PW = #{newUserPw}
 		WHERE USER_NUMBER = #{userNumber}
-		AND
-		USER_TYPE =
-		'기업회원'
+		AND USER_TYPE = '기업회원'
 	</update>
 
 	<!-- 기업회원 마이페이지 - 기업정보페이지 등록 전 체크 -->
@@ -261,8 +224,7 @@
 		JOIN TBL_COMPANY_MEMBER
 		CM
 		ON CI.COMPANY_NUMBER = CM.COMPANY_NUMBER
-		WHERE CM.USER_NUMBER =
-		#{value}
+		WHERE CM.USER_NUMBER = #{value}
 	</select>
 
 	<!-- 기업회원 마이페이지 - 기업정보페이지 상세 조회 -->
@@ -270,64 +232,48 @@
 		resultType="com.ccc.company.dto.CompanyDetailDTO">
 		SELECT
 		C.COMPANY_NUMBER AS companyNumber,
-		C.COMPANY_NAME AS
-		companyName,
+		C.COMPANY_NAME AS companyName,
 		C.COMPANY_ADDRESS AS companyAddress,
-		C.COMPANY_STATE AS
-		companyState,
+		C.COMPANY_STATE AS companyState,
 		C.COMPANY_BRN AS companyBrn,
 		F.FILE_PATH AS filePath,
-		CI.COMP_CEO_NAME
-		AS compCeoName,
+		CI.COMP_CEO_NAME AS compCeoName,
 		CI.COMP_FND_YEAR AS compFndYear,
-		CI.COMP_EMPL_CNT AS
-		compEmplCnt,
+		CI.COMP_EMPL_CNT AS compEmplCnt,
 		CI.COMP_REV AS compRev,
-		CI.COMP_CAP AS
-		compCap,
+		CI.COMP_CAP AS compCap,
 		CI.COMP_TYPE AS compType,
 		CI.COMP_SUMMARY AS compSummary,
-		CI.COMP_TECH
-		AS compTech,
+		CI.COMP_TECH AS compTech,
 		CI.COMP_MAIN_BIZ AS compMainBiz,
-		CI.COMP_INFO
-		AS compInfo,
+		CI.COMP_INFO AS compInfo,
 		CI.COMP_SVC_HIST AS compSvcHist,
-		JP.JOB_POST_PROFILE AS
-		jobPostProfile,
+		JP.JOB_POST_PROFILE AS jobPostProfile,
 		JP.JOB_POST_CONTENT AS jobPostContent,
-		JP.JOB_POST_PROCESS AS
-		jobPostProcess,
-		JP.JOB_POST_METHOD AS
-		jobPostMethod,
-		TO_CHAR(JP.JOB_POST_DATE, 'YYYY.MM.DD') AS jobPostDate,
+		JP.JOB_POST_PROCESS AS jobPostProcess,
+		JP.JOB_POST_METHOD AS jobPostMethod,
+		DATE_FORMAT(JP.JOB_POST_DATE, '%Y.%m.%d') AS jobPostDate,
 		JP.CAT1_IS_HIRING AS cat1IsHiring,
 		JP.CAT2_IS_HIRING AS cat2IsHiring,
 		JP.CAT3_IS_HIRING AS cat3IsHiring,
 		JP.CAT4_IS_HIRING AS cat4IsHiring
 		FROM TBL_COMPANY_MEMBER CM
 		JOIN TBL_COMPANY C
-		ON CM.COMPANY_NUMBER =
-		C.COMPANY_NUMBER
+		ON CM.COMPANY_NUMBER = C.COMPANY_NUMBER
 		JOIN TBL_COMP_INFO CI
-		ON C.COMPANY_NUMBER =
-		CI.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
 		LEFT JOIN (
 		SELECT
 		COMPANY_NUMBER,
-		MIN(FILE_NUMBER) AS
-		FILE_NUMBER
+		MIN(FILE_NUMBER) AS FILE_NUMBER
 		FROM TBL_FILE
 		GROUP BY COMPANY_NUMBER
 		) FM
-		ON C.COMPANY_NUMBER
-		= FM.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
 		LEFT JOIN TBL_FILE F
-		ON FM.FILE_NUMBER =
-		F.FILE_NUMBER
+		ON FM.FILE_NUMBER = F.FILE_NUMBER
 		LEFT JOIN TBL_JOB_POST JP
-		ON C.COMPANY_NUMBER =
-		JP.COMPANY_NUMBER
+		ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
 		WHERE CM.USER_NUMBER = #{value}
 	</select>
 
@@ -362,24 +308,19 @@
 		#{compMainBiz},
 		#{compInfo},
 		#{compSvcHist},
-		SYSDATE
+		NOW()
 		)
 	</insert>
 
 	<!-- 기업회원 마이페이지 - 기업정보페이지 등록(대표 이미지 저장) -->
 	<!-- 사용 페이지 : companyPageForm.jsp -->
-	<insert id="insertFile" parameterType="FileDTO">
-		<selectKey keyProperty="fileNumber" resultType="int"
-			order="BEFORE">
-			SELECT SEQ_FILE_NUMBER.NEXTVAL FROM DUAL
-		</selectKey>
-
+	<insert id="insertFile" parameterType="FileDTO"
+		useGeneratedKeys="true" keyProperty="fileNumber"
+		keyColumn="FILE_NUMBER">
 		INSERT INTO TBL_FILE (
-		FILE_NUMBER,
 		FILE_PATH,
 		COMPANY_NUMBER
 		) VALUES (
-		#{fileNumber},
 		#{filePath},
 		#{companyNumber}
 		)
@@ -406,7 +347,7 @@
 		#{jobPostContent},
 		#{jobPostProcess},
 		#{jobPostMethod},
-		SYSDATE,
+		NOW(),
 		#{cat1IsHiring},
 		#{cat2IsHiring},
 		#{cat3IsHiring},
@@ -416,24 +357,21 @@
 
 	<!-- 기업회원 마이페이지 - 기업정보페이지 수정(기업소개 수정) -->
 	<!-- 사용 페이지 : companyPageEdit.jsp -->
-	<!-- 기업회원 마이페이지 - 기업정보페이지 수정(기업소개 수정) -->
-	<!-- 사용 페이지 : companyPageEdit.jsp -->
 	<update id="updateCompInfo" parameterType="CompanyInfoDTO">
 		UPDATE TBL_COMP_INFO
-		SET COMP_CEO_NAME = #{compCeoName},
+		SET
+		COMP_CEO_NAME = #{compCeoName},
 		COMP_FND_YEAR = #{compFndYear},
 		COMP_EMPL_CNT = #{compEmplCnt},
 		COMP_REV = #{compRev},
-		COMP_CAP =
-		#{compCap},
+		COMP_CAP = #{compCap},
 		COMP_TYPE = #{compType},
 		COMP_SUMMARY = #{compSummary},
 		COMP_TECH = #{compTech},
 		COMP_MAIN_BIZ = #{compMainBiz},
-		COMP_INFO =
-		#{compInfo},
+		COMP_INFO = #{compInfo},
 		COMP_SVC_HIST = #{compSvcHist},
-		COMP_EDIT_DATE = SYSDATE
+		COMP_EDIT_DATE = NOW()
 		WHERE COMPANY_NUMBER = #{companyNumber}
 	</update>
 
@@ -443,11 +381,9 @@
 		TBL_FILE
 		SET FILE_PATH = #{filePath}
 		WHERE COMPANY_NUMBER = (
-		SELECT
-		COMPANY_NUMBER
+		SELECT COMPANY_NUMBER
 		FROM TBL_COMPANY_MEMBER
-		WHERE
-		USER_NUMBER = #{userNumber}
+		WHERE USER_NUMBER = #{userNumber}
 		)
 	</update>
 
@@ -457,11 +393,10 @@
 		UPDATE TBL_JOB_POST
 		SET
 		JOB_POST_PROFILE = #{jobPostProfile},
-		JOB_POST_CONTENT =
-		#{jobPostContent},
+		JOB_POST_CONTENT = #{jobPostContent},
 		JOB_POST_PROCESS = #{jobPostProcess},
 		JOB_POST_METHOD = #{jobPostMethod},
-		JOB_POST_EDIT_DATE = SYSDATE,
+		JOB_POST_EDIT_DATE = NOW(),
 		CAT1_IS_HIRING = #{cat1IsHiring},
 		CAT2_IS_HIRING = #{cat2IsHiring},
 		CAT3_IS_HIRING = #{cat3IsHiring},
@@ -475,10 +410,8 @@
 		TBL_JOB_POST
 		WHERE COMPANY_NUMBER = (
 		SELECT COMPANY_NUMBER
-		FROM
-		TBL_COMPANY_MEMBER
-		WHERE
-		USER_NUMBER = #{value}
+		FROM TBL_COMPANY_MEMBER
+		WHERE USER_NUMBER = #{value}
 		)
 	</delete>
 
@@ -487,10 +420,8 @@
 		TBL_FILE
 		WHERE COMPANY_NUMBER = (
 		SELECT COMPANY_NUMBER
-		FROM
-		TBL_COMPANY_MEMBER
-		WHERE
-		USER_NUMBER = #{value}
+		FROM TBL_COMPANY_MEMBER
+		WHERE USER_NUMBER = #{value}
 		)
 	</delete>
 
@@ -499,10 +430,8 @@
 		FROM TBL_COMP_INFO
 		WHERE COMPANY_NUMBER = (
 		SELECT COMPANY_NUMBER
-		FROM
-		TBL_COMPANY_MEMBER
-		WHERE
-		USER_NUMBER = #{value}
+		FROM TBL_COMPANY_MEMBER
+		WHERE USER_NUMBER = #{value}
 		)
 	</delete>
 
@@ -519,8 +448,7 @@
 		DELETE FROM
 		TBL_POST
 		WHERE USER_NUMBER = #{value}
-		AND POST_TYPE IN ('FREE_POST',
-		'QNA_POST')
+		AND POST_TYPE IN ('FREE_POST', 'QNA_POST')
 	</delete>
 
 	<delete id="deleteMemberByUserNumber" parameterType="int">
@@ -537,10 +465,10 @@
 	<!-- 직군조회 -->
 	<select id="selectJobGroupList" resultType="JobGroupDTO">
 		SELECT
-		JOB_NUMBER AS
-		jobNumber,
+		JOB_NUMBER AS jobNumber,
 		JOB_NAME AS jobName
 		FROM TBL_JOB_GROUP
 		ORDER BY JOB_NUMBER
 	</select>
+
 </mapper>

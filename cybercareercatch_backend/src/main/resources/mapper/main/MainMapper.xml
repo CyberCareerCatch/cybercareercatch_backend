@@ -11,10 +11,9 @@
 		SELECT
 		JOB_QUESTION_NUMBER AS jobQuestionNumber,
 		JOB_QUESTION_CONTENT AS jobQuestionContent
-		FROM
-		TBL_JOB_RECOMMEND_QUESTION
-		WHERE JOB_QUESTION_NUMBER =
-		#{jobQuestionNumber}
+		FROM TBL_JOB_RECOMMEND_QUESTION
+		WHERE
+		JOB_QUESTION_NUMBER = #{jobQuestionNumber}
 	</select>
 
 	<!-- 메인 질문 총 개수 조회 -->
@@ -35,23 +34,19 @@
 
 	<!-- 직군검사 결과 1건 생성 -->
 	<insert id="insertMainJobResult"
-		parameterType="JobTestResultDTO">
-		<selectKey keyProperty="jobResultNumber" resultType="int"
-			order="BEFORE">
-			SELECT SEQ_JOB_RESULT.NEXTVAL
-			FROM DUAL
-		</selectKey>
-
-		INSERT INTO TBL_JOB_RESULT (
-		JOB_RESULT_NUMBER,
+		parameterType="JobTestResultDTO" useGeneratedKeys="true"
+		keyProperty="jobResultNumber">
+		INSERT INTO TBL_JOB_RESULT
+		(
 		USER_NUMBER,
 		JOB_RESULT_STATUS,
 		JOB_RESULT_CREATED_DATE
-		) VALUES (
-		#{jobResultNumber},
+		)
+		VALUES
+		(
 		#{userNumber},
 		'제출완료',
-		SYSDATE
+		NOW()
 		)
 	</insert>
 
@@ -67,12 +62,15 @@
 	<!-- 메인 상단 질문 1개 저장 -->
 	<insert id="insertMainAnswer" parameterType="JobTestSubmitDTO">
 		INSERT INTO
-		TBL_JOB_RESULT_ANSWER (
+		TBL_JOB_RESULT_ANSWER
+		(
 		JOB_RESULT_NUMBER,
 		JOB_QUESTION_NUMBER,
 		JOB_QUESTION_CONTENT_SNAPSHOT,
 		ANSWER_CONTENT
-		) VALUES (
+		)
+		VALUES
+		(
 		#{jobResultNumber},
 		#{jobQuestionNumber},
 		#{jobQuestionContentSnapshot},
@@ -97,19 +95,16 @@
 	<!-- 메인 추천 직군 유형 4개 조회 -->
 	<select id="selectMainJobGroupList" resultType="JobGroupDTO">
 		SELECT
-		JOB_NUMBER
-		AS jobNumber,
+		JOB_NUMBER AS jobNumber,
 		JOB_NAME AS jobName
 		FROM TBL_JOB_GROUP
-		WHERE JOB_NUMBER
-		BETWEEN 1 AND 4
-		ORDER BY JOB_NUMBER ASC
+		WHERE JOB_NUMBER BETWEEN 1 AND 4
+		ORDER BY
+		JOB_NUMBER ASC
 	</select>
 
 	<!-- 메인 기업 홍보 카드 3개 조회 -->
 	<select id="selectMainCompanyList" resultType="CompanyCardDTO">
-		SELECT *
-		FROM (
 		SELECT
 		C.COMPANY_NUMBER AS companyNumber,
 		C.COMPANY_NAME AS companyName,
@@ -117,16 +112,14 @@
 		C.COMPANY_STATE AS companyState,
 		CI.COMP_SUMMARY AS compSummary,
 		F.FILE_PATH AS filePath,
-		TO_CHAR(NVL(CI.COMP_EDIT_DATE, CI.COMP_PAGE_DATE), 'YYYY-MM-DD') AS
-		compPageDate,
-		NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
-		NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
-		NVL(JP.CAT3_IS_HIRING, 0) AS
-		cat3IsHiring,
-		NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
-		FROM TBL_COMPANY
-		C
-		JOIN TBL_COMP_INFO CI
+		DATE_FORMAT(IFNULL(CI.COMP_EDIT_DATE, CI.COMP_PAGE_DATE), '%Y-%m-%d') AS compPageDate,
+		IFNULL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
+		IFNULL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
+		IFNULL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
+		IFNULL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
+		FROM TBL_COMPANY C
+		JOIN
+		TBL_COMP_INFO CI
 		ON C.COMPANY_NUMBER = CI.COMPANY_NUMBER
 		LEFT JOIN
 		(
@@ -137,88 +130,71 @@
 		GROUP BY COMPANY_NUMBER
 		) FM
 		ON C.COMPANY_NUMBER = FM.COMPANY_NUMBER
-		LEFT JOIN TBL_FILE F
-		ON FM.FILE_NUMBER = F.FILE_NUMBER
 		LEFT JOIN
-		TBL_JOB_POST JP
+		TBL_FILE F
+		ON FM.FILE_NUMBER = F.FILE_NUMBER
+		LEFT JOIN TBL_JOB_POST JP
 		ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
-		WHERE
-		C.COMPANY_STATE = '승인'
-		ORDER BY NVL(CI.COMP_EDIT_DATE,
-		CI.COMP_PAGE_DATE) DESC, C.COMPANY_NUMBER
-		DESC
-		)
-		WHERE ROWNUM &lt;= 3
+		WHERE C.COMPANY_STATE = '승인'
+		ORDER BY IFNULL(CI.COMP_EDIT_DATE, CI.COMP_PAGE_DATE) DESC,
+		C.COMPANY_NUMBER DESC
+		LIMIT 3
 	</select>
 
 	<!-- 메인 자유게시판 최신글 5개 조회 -->
 	<select id="selectMainFreePostList" resultType="PostListDTO">
-		SELECT *
-		FROM (
 		SELECT
 		P.POST_NUMBER AS postNumber,
 		P.POST_TITLE AS postTitle,
-		U.USER_ID
-		AS userId,
-		TO_CHAR(P.POST_DATE, 'YYYY-MM-DD') AS postDate,
-		TO_CHAR(P.EDIT_DATE, 'YYYY-MM-DD') AS editDate
+		U.USER_ID AS userId,
+		DATE_FORMAT(P.POST_DATE, '%Y-%m-%d') AS postDate,
+		DATE_FORMAT(P.EDIT_DATE, '%Y-%m-%d') AS editDate
 		FROM TBL_POST P
-		JOIN
-		TBL_USER U
-		ON P.USER_NUMBER = U.USER_NUMBER
-		WHERE P.POST_TYPE =
-		'FREE_POST'
-		ORDER BY P.POST_NUMBER DESC
-		)
-		WHERE ROWNUM &lt;= 5
+		JOIN TBL_USER U
+		ON P.USER_NUMBER
+		= U.USER_NUMBER
+		WHERE P.POST_TYPE = 'FREE_POST'
+		ORDER BY P.POST_NUMBER
+		DESC
+		LIMIT 5
 	</select>
 
 	<!-- 메인 기업 QNA 최신글 5개 조회 -->
 	<select id="selectMainQnaList" resultType="QnaListDTO">
-		SELECT *
-		FROM (
 		SELECT
 		P.POST_NUMBER AS postNumber,
 		P.POST_TITLE AS postTitle,
-		C.COMPANY_NAME
-		AS companyName,
+		C.COMPANY_NAME AS companyName,
 		U.USER_ID AS userId,
-		TO_CHAR(P.POST_DATE, 'YYYY-MM-DD')
-		AS postDate,
+		DATE_FORMAT(P.POST_DATE, '%Y-%m-%d') AS postDate,
 		P.VIEW_COUNT AS viewCount,
 		P.ANSWER_STATUS AS answerStatus
 		FROM TBL_POST P
 		JOIN TBL_USER U
-		ON P.USER_NUMBER = U.USER_NUMBER
-		JOIN
-		TBL_COMPANY C
+		ON P.USER_NUMBER =
+		U.USER_NUMBER
+		JOIN TBL_COMPANY C
 		ON P.COMPANY_NUMBER = C.COMPANY_NUMBER
-		WHERE P.POST_TYPE =
-		'QNA_POST'
+		WHERE P.POST_TYPE = 'QNA_POST'
 		ORDER BY P.POST_NUMBER DESC
-		)
-		WHERE ROWNUM &lt;= 5
+		LIMIT 5
 	</select>
 
 	<!-- 메인 박람회 일정 등록 최신순 3개 조회 -->
 	<select id="selectMainExpoList" resultType="ExpoListDTO">
-		SELECT *
-		FROM (
 		SELECT
 		EXPO_NUMBER AS expoNumber,
 		EXPO_NAME AS expoName,
-		TO_CHAR(START_DATE,
-		'YYYY-MM-DD') AS startDate,
-		TO_CHAR(END_DATE, 'YYYY-MM-DD') AS endDate,
+		DATE_FORMAT(START_DATE, '%Y-%m-%d') AS startDate,
+		DATE_FORMAT(END_DATE, '%Y-%m-%d') AS endDate,
 		LOCATION AS location,
-		TO_CHAR(REG_DATE, 'YYYY-MM-DD') AS regDate
-		FROM
-		TBL_EXPO
-		WHERE END_DATE &gt;= TRUNC(SYSDATE)
-		ORDER BY REG_DATE DESC,
+		DATE_FORMAT(REG_DATE, '%Y-%m-%d') AS regDate
+		FROM TBL_EXPO
+		WHERE END_DATE >= CURDATE()
+		ORDER
+		BY REG_DATE DESC,
 		EXPO_NUMBER DESC
-		)
-		WHERE ROWNUM &lt;= 3
+		LIMIT 3
 	</select>
 
 </mapper>

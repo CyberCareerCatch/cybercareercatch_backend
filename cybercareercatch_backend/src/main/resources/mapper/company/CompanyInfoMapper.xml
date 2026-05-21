@@ -41,7 +41,7 @@
             #{compMainBiz},
             #{compInfo},
             #{compSvcHist},
-            SYSDATE
+            NOW()
         )
     </insert>
 
@@ -69,11 +69,11 @@
             JP.JOB_POST_CONTENT AS jobPostContent,
             JP.JOB_POST_PROCESS AS jobPostProcess,
             JP.JOB_POST_METHOD AS jobPostMethod,
-            TO_CHAR(JP.JOB_POST_DATE, 'YYYY.MM.DD') AS jobPostDate,
-            NVL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
-            NVL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
-            NVL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
-            NVL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
+            DATE_FORMAT(JP.JOB_POST_DATE, '%Y.%m.%d') AS jobPostDate,
+            IFNULL(JP.CAT1_IS_HIRING, 0) AS cat1IsHiring,
+            IFNULL(JP.CAT2_IS_HIRING, 0) AS cat2IsHiring,
+            IFNULL(JP.CAT3_IS_HIRING, 0) AS cat3IsHiring,
+            IFNULL(JP.CAT4_IS_HIRING, 0) AS cat4IsHiring
         FROM TBL_COMPANY_MEMBER CM
         JOIN TBL_COMPANY C
           ON CM.COMPANY_NUMBER = C.COMPANY_NUMBER
@@ -91,6 +91,11 @@
           ON FM.FILE_NUMBER = F.FILE_NUMBER
         LEFT JOIN TBL_JOB_POST JP
           ON C.COMPANY_NUMBER = JP.COMPANY_NUMBER
+         AND JP.JOB_POST_NUMBER = (
+             SELECT MAX(SUB_JP.JOB_POST_NUMBER)
+             FROM TBL_JOB_POST SUB_JP
+             WHERE SUB_JP.COMPANY_NUMBER = C.COMPANY_NUMBER
+         )
         WHERE CM.USER_NUMBER = #{value}
           AND CM.COMPANY_MANAGER_STATE = 'ACTIVE'
     </select>

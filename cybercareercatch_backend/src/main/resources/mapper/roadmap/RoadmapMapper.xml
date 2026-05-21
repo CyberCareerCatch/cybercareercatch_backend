@@ -6,10 +6,11 @@
 <mapper namespace="roadmap">
 
 	<!-- 로드맵 기본 정보 -->
-	<select id="selectRoadmap" parameterType="int" resultType="RoadmapDTO">
+	<select id="selectRoadmap" parameterType="int"
+		resultType="RoadmapDTO">
 		SELECT
-			JOB_NUMBER,
-			ROADMAP_IMAGE_PATH
+		JOB_NUMBER,
+		ROADMAP_IMAGE_PATH
 		FROM TBL_ROADMAP
 		WHERE JOB_NUMBER = #{jobNumber}
 	</select>
@@ -20,13 +21,15 @@
 		WHERE JOB_NUMBER = #{jobNumber}
 	</update>
 
+
 	<!-- 관련 직업 -->
-	<select id="selectRoadmapJobList" parameterType="int" resultType="RoadmapJobDTO">
+	<select id="selectRoadmapJobList" parameterType="int"
+		resultType="RoadmapJobDTO">
 		SELECT
-			ROADMAP_JOB_NUMBER,
-			JOB_NUMBER,
-			ROADMAP_JOB_NAME,
-			ROADMAP_JOB_DESC
+		ROADMAP_JOB_NUMBER,
+		JOB_NUMBER,
+		ROADMAP_JOB_NAME,
+		ROADMAP_JOB_DESC
 		FROM TBL_ROADMAP_JOB
 		WHERE JOB_NUMBER = #{jobNumber}
 		ORDER BY ROADMAP_JOB_NUMBER
@@ -35,22 +38,22 @@
 	<update id="updateRoadmapJob" parameterType="RoadmapJobDTO">
 		UPDATE TBL_ROADMAP_JOB
 		SET
-			ROADMAP_JOB_NAME = #{roadmapJobName},
-			ROADMAP_JOB_DESC = #{roadmapJobDesc}
+		ROADMAP_JOB_NAME = #{roadmapJobName},
+		ROADMAP_JOB_DESC = #{roadmapJobDesc}
 		WHERE ROADMAP_JOB_NUMBER = #{roadmapJobNumber}
 	</update>
 
+	<!-- ※ TBL_ROADMAP_JOB 테이블의 ROADMAP_JOB_NUMBER 컬럼을 AUTO_INCREMENT로 설정해야 
+		합니다 -->
 	<insert id="insertRoadmapJob" parameterType="RoadmapJobDTO">
 		INSERT INTO TBL_ROADMAP_JOB (
-			ROADMAP_JOB_NUMBER,
-			JOB_NUMBER,
-			ROADMAP_JOB_NAME,
-			ROADMAP_JOB_DESC
+		JOB_NUMBER,
+		ROADMAP_JOB_NAME,
+		ROADMAP_JOB_DESC
 		) VALUES (
-			SEQ_ROADMAP_JOB_NUMBER.NEXTVAL,
-			#{jobNumber},
-			#{roadmapJobName},
-			#{roadmapJobDesc}
+		#{jobNumber},
+		#{roadmapJobName},
+		#{roadmapJobDesc}
 		)
 	</insert>
 
@@ -59,49 +62,53 @@
 		WHERE ROADMAP_JOB_NUMBER = #{roadmapJobNumber}
 	</delete>
 
+
 	<!-- 커리큘럼 -->
-	<select id="selectCurriculumList" parameterType="int" resultType="RoadmapCurriculumDTO">
+	<select id="selectCurriculumList" parameterType="int"
+		resultType="RoadmapCurriculumDTO">
 		SELECT
-			CURRICULUM_NUMBER,
-			JOB_NUMBER,
-			SKILL_TYPE,
-			SKILL_NAME,
-			SKILL_DESC
+		CURRICULUM_NUMBER,
+		JOB_NUMBER,
+		SKILL_TYPE,
+		SKILL_NAME,
+		SKILL_DESC
 		FROM TBL_ROADMAP_CURRICULUM
 		WHERE JOB_NUMBER = #{jobNumber}
 		ORDER BY
-			CASE
-				WHEN SKILL_TYPE = '기초 다지기' THEN 1
-				WHEN SKILL_TYPE = '보안기초 다지기' THEN 2
-				WHEN SKILL_TYPE = '실습' THEN 3
-				WHEN SKILL_TYPE = '결과물' THEN 4
-				ELSE 99
-			END,
-			CURRICULUM_NUMBER
+		CASE
+		WHEN SKILL_TYPE = '기초 다지기' THEN 1
+		WHEN SKILL_TYPE = '보안기초 다지기' THEN 2
+		WHEN SKILL_TYPE = '실습' THEN 3
+		WHEN SKILL_TYPE = '결과물' THEN 4
+		ELSE 99
+		END,
+		CURRICULUM_NUMBER
 	</select>
 
-	<update id="updateCurriculum" parameterType="RoadmapCurriculumDTO">
+	<update id="updateCurriculum"
+		parameterType="RoadmapCurriculumDTO">
 		UPDATE TBL_ROADMAP_CURRICULUM
 		SET
-			SKILL_TYPE = #{skillType},
-			SKILL_NAME = #{skillName},
-			SKILL_DESC = #{skillDesc}
+		SKILL_TYPE = #{skillType},
+		SKILL_NAME = #{skillName},
+		SKILL_DESC = #{skillDesc}
 		WHERE CURRICULUM_NUMBER = #{curriculumNumber}
 	</update>
 
-	<insert id="insertCurriculum" parameterType="RoadmapCurriculumDTO">
+	<!-- ※ TBL_ROADMAP_CURRICULUM 테이블의 CURRICULUM_NUMBER 컬럼을 AUTO_INCREMENT로 
+		설정해야 합니다 -->
+	<insert id="insertCurriculum"
+		parameterType="RoadmapCurriculumDTO">
 		INSERT INTO TBL_ROADMAP_CURRICULUM (
-			CURRICULUM_NUMBER,
-			JOB_NUMBER,
-			SKILL_TYPE,
-			SKILL_NAME,
-			SKILL_DESC
+		JOB_NUMBER,
+		SKILL_TYPE,
+		SKILL_NAME,
+		SKILL_DESC
 		) VALUES (
-			SEQ_ROADMAP_CURRICULUM_NUMBER.NEXTVAL,
-			#{jobNumber},
-			#{skillType},
-			#{skillName},
-			#{skillDesc}
+		#{jobNumber},
+		#{skillType},
+		#{skillName},
+		#{skillDesc}
 		)
 	</insert>
 
@@ -110,44 +117,45 @@
 		WHERE CURRICULUM_NUMBER = #{curriculumNumber}
 	</delete>
 
+
 	<!-- 추천 -->
-	<select id="selectRecList" parameterType="int" resultType="RoadmapRecDTO">
+	<select id="selectRecList" parameterType="int"
+		resultType="RoadmapRecDTO">
 		SELECT
-			REC_NUMBER,
-			JOB_NUMBER,
-			REC_TYPE,
-			REC_NAME
+		REC_NUMBER,
+		JOB_NUMBER,
+		REC_TYPE,
+		REC_NAME
 		FROM TBL_ROADMAP_REC
 		WHERE JOB_NUMBER = #{jobNumber}
 		ORDER BY
-			CASE
-				WHEN REC_TYPE = '추천기술' THEN 1
-				WHEN REC_TYPE = '추천성향' THEN 2
-				WHEN REC_TYPE = '추천자격증' THEN 3
-				ELSE 99
-			END,
-			REC_NUMBER
+		CASE
+		WHEN REC_TYPE = '추천기술' THEN 1
+		WHEN REC_TYPE = '추천성향' THEN 2
+		WHEN REC_TYPE = '추천자격증' THEN 3
+		ELSE 99
+		END,
+		REC_NUMBER
 	</select>
 
 	<update id="updateRec" parameterType="RoadmapRecDTO">
 		UPDATE TBL_ROADMAP_REC
 		SET
-			REC_TYPE = #{recType},
-			REC_NAME = #{recName}
+		REC_TYPE = #{recType},
+		REC_NAME = #{recName}
 		WHERE REC_NUMBER = #{recNumber}
 	</update>
 
+	<!-- ※ TBL_ROADMAP_REC 테이블의 REC_NUMBER 컬럼을 AUTO_INCREMENT로 설정해야 합니다 -->
 	<insert id="insertRec" parameterType="RoadmapRecDTO">
 		INSERT INTO TBL_ROADMAP_REC (
-			REC_NUMBER,
-			JOB_NUMBER,
-			REC_TYPE,
-			REC_NAME
+		JOB_NUMBER,
+		REC_TYPE,
+		REC_NAME
 		) VALUES (
-			SEQ_ROADMAP_REC_NUMBER.NEXTVAL,
-			#{jobNumber},
-			#{recType},
-			#{recName}
+		#{jobNumber},
+		#{recType},
+		#{recName}
 		)
 	</insert>
 
